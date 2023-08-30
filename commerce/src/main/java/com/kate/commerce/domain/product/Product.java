@@ -39,6 +39,9 @@ public class Product {
     @Column(name = "status")
     private ProductStatus status;
 
+    @Column(name = "stock_quantity")
+    private int stockQuantity;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -69,5 +72,19 @@ public class Product {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
+    // ==비즈니스 로직==//
+
+    /**
+     * 재고 증가
+     * 
+     * @param quantity
+     */
+
+    /**
+     * 재고 감소
+     * 
+     * @param quantity
+     */
 
 }

@@ -7,4 +7,6 @@ import lombok.Data;
 @Data
 public class OrderRequestDTO {
     private PayType payType;
+
+    private String couponCode;
 }

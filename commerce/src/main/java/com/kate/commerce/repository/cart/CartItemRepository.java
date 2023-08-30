@@ -13,22 +13,18 @@ import java.util.List;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-        @Query(value = "SELECT new com.kate.commerce.domain.cart.CartItemProduct(ci.cartId, ci.cartItemId, ci.productId, p.productName, p.price, p.imageUrl, ci.quantity, p.deliveryType) "
+        @Query(value = "SELECT new com.kate.commerce.domain.cart.CartItemProduct(ci.cartId, ci.cartItemId, ci.productId, p.productName, p.price, p.imageUrl, p.stockQuantity, ci.quantity, p.deliveryType) "
                         +
                         "FROM CartItem ci " +
                         "INNER JOIN Product p ON ci.productId = p.id " +
-                        "WHERE ci.cartItemId IN (:cartItemIds) AND ci.isDeleted = false"
-
-        )
+                        "WHERE ci.cartItemId IN (:cartItemIds) AND ci.isDeleted = false")
         List<CartItemProduct> findAllCartItems(@Param("cartItemIds") List<Long> cartItemIds);
 
         @Query(value = "SELECT new com.kate.commerce.domain.cart.CartItemProduct(ci.cartId, ci.cartItemId, ci.productId, p.productName, p.price, p.imageUrl, ci.quantity, p.deliveryType) "
                         +
                         "FROM CartItem ci " +
                         "INNER JOIN Product p ON ci.productId = p.id " +
-                        "WHERE ci.cartId = :cartId AND ci.isDeleted = false"
-
-        )
+                        "WHERE ci.cartId = :cartId AND ci.isDeleted = false")
         List<CartItemProduct> findAllCartItems(@Param("cartId") Long cartId);
 
         @Query(value = "SELECT COUNT(ci) " +

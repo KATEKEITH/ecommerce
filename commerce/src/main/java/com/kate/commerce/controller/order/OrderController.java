@@ -43,7 +43,8 @@ public class OrderController {
         List<CartItemProduct> cartItems = cartService.getCartItems(customer.getCustomerId());
         List<Long> cartItemIds = cartItems.stream().map(cartItemProduct -> cartItemProduct.getCartItemId())
                 .collect(Collectors.toList());
-        Long orderId = this.orderService.order(customer, cartItemIds, orderRequest.getPayType());
+        Long orderId = this.orderService.order(customer, cartItemIds, orderRequest.getPayType(),
+                orderRequest.getCouponCode());
         cartService.empty(customer.getCustomerId());
 
         redirectAttributes.addFlashAttribute("orderId", orderId);

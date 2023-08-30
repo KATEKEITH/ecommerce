@@ -27,6 +27,8 @@ public class CartItemProduct {
 
     private int quantity;
 
+    private int stockQuantity;
+
     private DeliveryType deliveryType;
 
 }

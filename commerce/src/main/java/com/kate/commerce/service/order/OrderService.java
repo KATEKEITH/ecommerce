@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kate.commerce.domain.cart.CartItemProduct;
+import com.kate.commerce.domain.coupon.Coupon;
 import com.kate.commerce.domain.customer.Customer;
 import com.kate.commerce.domain.order.Order;
 import com.kate.commerce.domain.order.OrderItem;
@@ -22,6 +23,8 @@ import com.kate.commerce.repository.cart.CartItemRepository;
 import com.kate.commerce.repository.customer.CustomerRepository;
 import com.kate.commerce.repository.order.OrderItemRepository;
 import com.kate.commerce.repository.order.OrderRepository;
+import com.kate.commerce.service.cart.CartQueryService;
+import com.kate.commerce.service.coupon.CouponQueryService;
 import com.kate.commerce.service.product.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,27 +42,29 @@ public class OrderService {
 
     private final OrderItemRepository orderItemRepository;
 
-    private final CartItemRepository cartItemRepository;
-
     private final CustomerRepository customerRepository;
 
     private final ProductService productService;
 
-    public Long order(Customer customer, List<Long> cartItems, PayType payType) {
+    private final OrderServiceSupport orderServiceSupport;
 
-        // Total Amount
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        List<CartItemProduct> targetCartItems = this.cartItemRepository.findAllCartItems(cartItems);
-        for (CartItemProduct cartItemProduct : targetCartItems) {
-            totalAmount = totalAmount
-                    .add(cartItemProduct.getProductPrice().multiply(new BigDecimal(cartItemProduct.getQuantity())));
-        }
+    private final CartQueryService cartQueryService;
 
-        // Order
-        Order savedOrder = createOrder(customer, totalAmount, payType);
+    private final CouponQueryService couponQueryService;
 
-        // Order Items
-        createOrderItems(targetCartItems, savedOrder);
+    public Long order(Customer customer, List<Long> cartItems, PayType payType, String couponCode) {
+
+        // 상품 정보 -> Elasticsearch
+        List<CartItemProduct> targetCartItems = cartQueryService.findAllCartItems(cartItems);
+
+        // 쿠폰 정보 -> Mysql
+        Coupon coupon = couponQueryService.findByCouponCode(couponCode);
+
+        Order savedOrder = orderServiceSupport.order(
+                customer,
+                targetCartItems,
+                payType,
+                coupon);
 
         return savedOrder.getOrderId();
     }
