@@ -1,12 +1,36 @@
----
 spring:
-  profiles:
-    active: prod
----
-spring:
-  profiles:
-    active: dev
----
-spring:
+  application:
+    name: monitoring
   profiles:
     active: local
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: local
